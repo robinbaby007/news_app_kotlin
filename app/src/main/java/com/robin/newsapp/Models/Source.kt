@@ -1,6 +1,6 @@
 package com.robin.newsapp.Models
 
 data class Source(
-    val id: Any,
+    val id:Any?=null,
     val name: String
 )

@@ -11,8 +11,10 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import com.robin.newsapp.Adapter.NewsAdapter
 import com.robin.newsapp.R
 import com.robin.newsapp.Util.Resource
@@ -24,6 +26,7 @@ class BreakingNewsFragment : Fragment() {
 
     lateinit var binding:FragmentBreakingNewsBinding
     lateinit var newsAdapter: NewsAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,6 +77,18 @@ class BreakingNewsFragment : Fragment() {
         binding.rvBreakingNews.apply {
             adapter=newsAdapter
             layoutManager=LinearLayoutManager(activity)
+        }
+
+        newsAdapter.setItemClick {
+
+
+            val bundle=Bundle()
+                .apply {
+                    putSerializable("article",it)
+                }
+            Log.e("setupRecyclerView: ",Gson().toJson(it), )
+
+            findNavController().navigate(R.id.action_breakingNewsFragment_to_articleFragment,bundle)
         }
 
      }
