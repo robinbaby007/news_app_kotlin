@@ -12,10 +12,14 @@ import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.paging.filter
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.robin.newsapp.Adapter.ArticlePagingAdapter
 import com.robin.newsapp.Adapter.NewsAdapter
+import com.robin.newsapp.Models.Article
 import com.robin.newsapp.R
 import com.robin.newsapp.Util.Resource
 import com.robin.newsapp.databinding.FragmentBreakingNewsBinding
@@ -25,7 +29,8 @@ class BreakingNewsFragment : Fragment() {
 
 
     lateinit var binding:FragmentBreakingNewsBinding
-    lateinit var newsAdapter: NewsAdapter
+//    lateinit var newsAdapter: NewsAdapter
+    lateinit var newsAdapter: ArticlePagingAdapter
 
 
     override fun onCreateView(
@@ -34,20 +39,19 @@ class BreakingNewsFragment : Fragment() {
     ): View? {
         binding=FragmentBreakingNewsBinding.inflate(inflater)
         val viewModel=(activity as NewsActivity).newsViewModel
-
-        newsAdapter= NewsAdapter()
+        newsAdapter= ArticlePagingAdapter()
         setupRecyclerView()
-        viewModel.getBreadingNews("in")
+        viewModel.getBreadingNews()
 
 
         viewModel.breakingNews.observe(viewLifecycleOwner, Observer {response->
-            when(response){
+            newsAdapter.submitData(lifecycle,response)
+           /* when(response){
                 is Resource.Success->{
                     hideProgressBar()
                     response.data?.let {
                         newsAdapter.differ.submitList(it.articles)
                     }
-
                 }
                 is Resource.Failure->{
                     hideProgressBar()
@@ -58,8 +62,7 @@ class BreakingNewsFragment : Fragment() {
                 is Resource.Loading->{
                     showProgressBar()
                 }
-            }
-
+            }*/
 
         })
          return binding.root
@@ -80,14 +83,11 @@ class BreakingNewsFragment : Fragment() {
         }
 
         newsAdapter.setItemClick {
-
-
             val bundle=Bundle()
                 .apply {
                     putSerializable("article",it)
                 }
             Log.e("setupRecyclerView: ",Gson().toJson(it), )
-
             findNavController().navigate(R.id.action_breakingNewsFragment_to_articleFragment,bundle)
         }
 

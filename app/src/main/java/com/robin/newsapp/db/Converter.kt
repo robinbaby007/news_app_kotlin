@@ -6,7 +6,7 @@ import com.robin.newsapp.Models.Source
 class Converter {
 
     @TypeConverter
-    fun fromSource(source: Source):String{
+    fun fromSource(source: Source):String?{
     return source.name
     }
 
